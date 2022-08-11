@@ -3,7 +3,6 @@ import './popup.css';
 (function () {
   function setUp() {
     document.getElementById('setup').addEventListener('click', () => {
-      console.log('Set up...');
       chrome.tabs.query(
         {
           active: true,
@@ -21,7 +20,6 @@ import './popup.css';
     });
 
     document.getElementById('save').addEventListener('click', () => {
-      console.log('Default pose saved.');
       chrome.tabs.query(
         {
           active: true,
@@ -74,6 +72,5 @@ import './popup.css';
       chrome.storage.local.set({ state: 'STOP' });
     });
   }
-
   document.addEventListener('DOMContentLoaded', setUp);
 })();

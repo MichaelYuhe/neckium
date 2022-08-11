@@ -1,7 +1,7 @@
 {
   "name": "neckium",
   "version": "0.1.0",
-  "description": "Neckium",
+  "description": "Move your head to control the browser",
   "private": true,
   "scripts": {
     "watch": "webpack --mode=development --watch --config config/webpack.config.js",
