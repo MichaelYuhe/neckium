@@ -27,6 +27,8 @@ video.style.zIndex = 2000;
 video.style.display = 'none';
 document.body.appendChild(video);
 
+let mode = 0; // 0 for step mode, 1 for consistent mode
+
 const verticalStep = 4;
 const scrollStep = 140;
 const horizonlStep = 15;

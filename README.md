@@ -30,6 +30,7 @@ You can move your head vertically to control the vertical scroll of your browser
 There will be more interesting and customizable actions comming...
 
 ## Todo
+
 - Switch tabs
 - Optimize scroll
 - Video uninstall
