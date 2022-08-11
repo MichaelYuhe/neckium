@@ -72,5 +72,6 @@ import './popup.css';
       chrome.storage.local.set({ state: 'STOP' });
     });
   }
+
   document.addEventListener('DOMContentLoaded', setUp);
 })();

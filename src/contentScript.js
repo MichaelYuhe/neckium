@@ -2,22 +2,17 @@ const posenet = require('@tensorflow-models/posenet');
 require('@tensorflow/tfjs-backend-webgl');
 require('@tensorflow/tfjs-backend-cpu');
 
+// User media constraints
 const constraints = {
   audio: false,
   video: {
-    height: 240,
     width: 320,
+    height: 240,
     facingMode: 'user',
   },
 };
 
-// Start automatically
-chrome.storage.local.get(['state'], async (res) => {
-  if (res.state === 'START') {
-    await start();
-  }
-});
-
+// Video params
 const video = document.createElement('video');
 video.width = 320;
 video.height = 240;
@@ -25,15 +20,21 @@ video.style.position = 'absolute';
 video.style.top = 0;
 video.style.zIndex = 2000;
 video.style.display = 'none';
+
 document.body.appendChild(video);
 
-let mode = 0; // 0 for step mode, 1 for consistent mode
+// 0 for step mode, 1 for consistent mode
+let mode = 0;
 
+// Que value
 const verticalStep = 4;
-const scrollStep = 140;
 const horizonlStep = 15;
 
+// Scroll distance
+const scrollStep = 140;
+
 let net = null;
+
 let defaultPose = [],
   prevPose = [],
   currPose = [];
@@ -41,8 +42,9 @@ let defaultPose = [],
 let settingInterval = null,
   detectingInterval = null;
 
+// Listen for control messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('request: ', request);
+  console.log('request: ', request.type);
   switch (request.type) {
     case 'SETUP':
       setup();
@@ -64,21 +66,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
+// Start automatically when the state is START
+chrome.storage.local.get(['state'], async (res) => {
+  if (res.state === 'START') {
+    await start();
+  }
+});
+
+// Init
 async function init() {
   net = await posenet.load();
-  const cachePose = await chrome.storage.local.get('default');
-  console.log('cachePose: ', cachePose.default);
+  const cachePose = await chrome.storage.local.get('default').default;
+  console.log('cachePose: ', cachePose);
   if (cachePose) {
-    defaultPose = cachePose.default;
+    defaultPose = cachePose;
     prevPose = defaultPose;
   }
 }
 
+// Setup default pose
 async function setup() {
   if (!net) await init();
 
   video.style.display = 'block';
-  // set up default pose
+
   navigator.mediaDevices
     .getUserMedia(constraints)
     .then(async (stream) => {
@@ -105,14 +116,16 @@ async function setup() {
     });
 }
 
+// Save default pose
 async function save() {
-  clearInterval(settingInterval);
-  video.style.display = 'none';
   console.log('Default Pose: ', defaultPose);
   prevPose = defaultPose;
-  chrome.storage.local.set({ default: defaultPose });
+  await chrome.storage.local.set({ default: defaultPose });
+  clearInterval(settingInterval);
+  video.style.display = 'none';
 }
 
+// Start Neckium
 async function start() {
   if (!net) await init();
 
@@ -173,13 +186,16 @@ async function start() {
     });
 }
 
+// Turn off camera and stop Neckium
 async function stop() {
   clearInterval(detectingInterval);
   const stream = video.srcObject;
-  stream.getTracks().forEach((track) => {
-    track.stop();
-  });
-  video.srcObject = null;
+  if (stream) {
+    stream.getTracks().forEach((track) => {
+      track.stop();
+    });
+    video.srcObject = null;
+  }
 }
 
 function checkVertical() {
@@ -218,6 +234,24 @@ function handleDown() {
   });
 }
 
-function handleLeft() {}
+function handleLeft() {
+  chrome.runtime.sendMessage(
+    {
+      type: 'LEFT',
+    },
+    (response) => {
+      console.log(response);
+    }
+  );
+}
 
-function handleRight() {}
+function handleRight() {
+  chrome.runtime.sendMessage(
+    {
+      type: 'RIGHT',
+    },
+    (response) => {
+      console.log(response);
+    }
+  );
+}
