@@ -2,6 +2,9 @@ import './popup.css';
 
 (function () {
   function setUp() {
+    chrome.storage.local.set({ mode: 1 });
+    let currMode = 1;
+
     const setupButton = document.getElementById('setup');
     setupButton.addEventListener('click', () => {
       chrome.tabs.query(
@@ -78,14 +81,24 @@ import './popup.css';
 
     const switchButton = document.getElementById('switch');
     switchButton.addEventListener('click', async () => {
-      let mode = chrome.storage.local.get('mode');
-      if (!mode) {
-        mode = -1;
-      } else {
-        mode = -mode;
-      }
-      chrome.storage.local.set({ mode: mode });
-      switchButton.innerHTML = mode;
+      currMode = -currMode;
+
+      await chrome.storage.local.set({ mode: currMode });
+      chrome.tabs.query(
+        {
+          active: true,
+          currentWindow: true,
+        },
+        (tabs) => {
+          const message = {
+            type: 'SWITCH',
+          };
+          chrome.tabs.sendMessage(tabs[0].id, message, (response) => {
+            console.log(response);
+          });
+        }
+      );
+      switchButton.innerText = String(currMode);
     });
   }
 

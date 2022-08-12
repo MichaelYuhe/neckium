@@ -23,7 +23,11 @@ video.style.display = 'none';
 
 document.body.appendChild(video);
 
-let mode = chrome.storage.local.get('mode').mode;
+let mode = 1;
+chrome.storage.local.get(['mode'], async (res) => {
+  mode = res.mode;
+  console.log('initial mode: ', mode);
+});
 
 // Que value
 const verticalStep = 4;
@@ -59,7 +63,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       stop();
       break;
     case 'SWITCH':
-      mode = chrome.storage.local.get('mode').mode;
+      chrome.storage.local.get(['mode'], async (res) => {
+        mode = res.mode;
+        console.log('mode switched to: ', mode);
+      });
       break;
     default:
       console.log('Invalid Message.');
@@ -79,7 +86,10 @@ chrome.storage.local.get(['state'], async (res) => {
 // Init
 async function init() {
   net = await posenet.load();
-  const cachePose = await chrome.storage.local.get('default').default;
+  let cachePose = [];
+  chrome.storage.local.get(['default'], async (res) => {
+    cachePose = res.default;
+  });
   console.log('cachePose: ', cachePose);
   if (cachePose) {
     defaultPose = cachePose;
@@ -160,7 +170,6 @@ async function start() {
         // Get Current Head Pose
         const res = await net.estimateSinglePose(video);
         currPose = res.keypoints.slice(0, 5);
-
         // Step mode
         if (mode === 1) {
           // Check Vertical and Horizonal Moves
