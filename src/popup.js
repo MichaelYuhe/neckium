@@ -1,47 +1,67 @@
 import './popup.css';
 
-function sendMessageToContent(message) {
-  chrome.tabs.query(
-    {
-      active: true,
-      currentWindow: true,
-    },
-    (tabs) => {
-      const messgae = {
-        type: message,
-      };
-      chrome.tabs.sendMessage(tabs[0].id, messgae, (response) => {
-        console.log(response);
-      });
-    }
-  );
-}
-
 (function () {
-  function setUp() {
-    chrome.storage.local.set({ mode: 1 });
+  let isSetting = false;
+
+  function sendMessageToContent(message) {
+    chrome.tabs.query(
+      {
+        active: true,
+        currentWindow: true,
+      },
+      (tabs) => {
+        const messgae = {
+          type: message,
+        };
+        chrome.tabs.sendMessage(tabs[0].id, messgae, (response) => {
+          console.log(response);
+        });
+      }
+    );
+  }
+
+  async function setUp() {
+    await chrome.storage.local.set({ mode: 1 });
+    await chrome.storage.local.set({ state: 'STOP' });
+
     let currMode = 1;
 
     const setupButton = document.getElementById('setup');
     setupButton.addEventListener('click', () => {
-      sendMessageToContent('SETUP');
+      chrome.storage.local.get(['state'], async (res) => {
+        if (res.state === 'STOP') {
+          await chrome.storage.local.set({ state: 'SETUP' });
+          sendMessageToContent('SETUP');
+        }
+      });
+      if (!isSetting) sendMessageToContent('SETUP');
+      isSetting = true;
     });
 
     const saveButton = document.getElementById('save');
     saveButton.addEventListener('click', () => {
-      sendMessageToContent('SAVE');
+      if (isSetting) sendMessageToContent('SAVE');
+      isSetting = false;
     });
 
     const startButton = document.getElementById('start');
     startButton.addEventListener('click', () => {
-      sendMessageToContent('START');
-      chrome.storage.local.set({ state: 'START' });
+      chrome.storage.local.get(['state'], async (res) => {
+        if (res.state === 'STOP') {
+          await chrome.storage.local.set({ state: 'START' });
+          sendMessageToContent('START');
+        }
+      });
     });
 
     const stopButton = document.getElementById('stop');
     stopButton.addEventListener('click', () => {
-      sendMessageToContent('STOP');
-      chrome.storage.local.set({ state: 'STOP' });
+      chrome.storage.local.get(['state'], async (res) => {
+        if (res.state === 'START') {
+          await chrome.storage.local.set({ state: 'STOP' });
+          sendMessageToContent('STOP');
+        }
+      });
     });
 
     const switchButton = document.getElementById('switch');
@@ -49,7 +69,8 @@ function sendMessageToContent(message) {
       currMode = -currMode;
       await chrome.storage.local.set({ mode: currMode });
       sendMessageToContent('SWITCH');
-      switchButton.innerText = String(currMode);
+      const modeText = currMode === 1 ? 'Step' : 'Consistent';
+      switchButton.innerText = modeText;
     });
   }
 

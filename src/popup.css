@@ -35,15 +35,20 @@ body {
   align-items: center;
 }
 
-.clear {
-}
-
 .title {
   font-size: 20px;
   font-weight: bold;
 }
 
-.switch {
+.header-button {
+  width: 80px;
+  height: 36px;
+  line-height: 36px;
+  font-weight: bold;
+  font-size: 14px;
+  border: 2px solid black;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .container {

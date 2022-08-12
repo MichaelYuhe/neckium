@@ -90,7 +90,6 @@ async function init() {
   chrome.storage.local.get(['default'], async (res) => {
     cachePose = res.default;
   });
-  console.log('cachePose: ', cachePose);
   if (cachePose) {
     defaultPose = cachePose;
     prevPose = defaultPose;
@@ -100,6 +99,8 @@ async function init() {
 // Setup default pose
 async function setup() {
   if (!net) await init();
+
+  await chrome.storage.local.set({ state: 'SETUP' });
 
   video.style.display = 'block';
 
@@ -131,9 +132,11 @@ async function setup() {
 
 // Save default pose
 async function save() {
-  console.log('Default Pose: ', defaultPose);
+  if (!defaultPose.length) return;
   prevPose = defaultPose;
   await chrome.storage.local.set({ default: defaultPose });
+  await chrome.storage.local.set({ state: 'STOP' });
+
   clearInterval(settingInterval);
   video.style.display = 'none';
   const stream = video.srcObject;
@@ -154,6 +157,8 @@ async function start() {
     await setup();
     return;
   }
+
+  await chrome.storage.local.set({ state: 'START' });
 
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -229,6 +234,8 @@ async function start() {
 
 // Turn off camera and stop Neckium
 async function stop() {
+  await chrome.storage.local.set({ state: 'STOP' });
+
   clearInterval(detectingInterval);
   const stream = video.srcObject;
   if (stream) {
