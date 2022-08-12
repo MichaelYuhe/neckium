@@ -3,7 +3,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
   console.log('request: ', request.type);
   if (request.type === 'RIGHT') {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
-      console.log(tabs);
       const len = tabs.length;
       const currIndex = tabs.find((tab) => tab.active).index;
       if (currIndex === len - 1) {
@@ -14,7 +13,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     });
   } else if (request.type === 'LEFT') {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
-      console.log(tabs);
       const currIndex = tabs.find((tab) => tab.active).index;
       if (currIndex === 0) {
         chrome.tabs.create();

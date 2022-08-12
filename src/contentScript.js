@@ -23,6 +23,8 @@ video.style.display = 'none';
 
 document.body.appendChild(video);
 
+let mode = chrome.storage.local.get('mode').mode;
+
 // Que value
 const verticalStep = 4;
 const horizonlStep = 15;
@@ -55,6 +57,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case 'STOP':
       stop();
+      break;
+    case 'SWITCH':
+      mode = chrome.storage.local.get('mode').mode;
       break;
     default:
       console.log('Invalid Message.');
@@ -121,6 +126,13 @@ async function save() {
   await chrome.storage.local.set({ default: defaultPose });
   clearInterval(settingInterval);
   video.style.display = 'none';
+  const stream = video.srcObject;
+  if (stream) {
+    stream.getTracks().forEach((track) => {
+      track.stop();
+    });
+    video.srcObject = null;
+  }
 }
 
 // Start Neckium
@@ -149,30 +161,52 @@ async function start() {
         const res = await net.estimateSinglePose(video);
         currPose = res.keypoints.slice(0, 5);
 
-        // Check Vertical and Horizonal Moves
-        const horizonalRes = checkHorizonal();
-        const verticalRes = checkVertical();
+        // Step mode
+        if (mode === 1) {
+          // Check Vertical and Horizonal Moves
+          const horizonalRes = checkHorizonal();
+          const verticalRes = checkVertical();
 
-        if (horizonalRes === 1) {
-          console.log('Move Right');
-          handleRight();
-        } else if (horizonalRes === -1) {
-          console.log('Move Left');
-          handleLeft();
-        } else {
-          if (verticalRes === 1) {
-            console.log('Move Up');
-            handleUp();
-          } else if (verticalRes === -1) {
-            console.log('Move Down');
-            handleDown();
+          if (horizonalRes === 1) {
+            console.log('Move Right');
+            handleRight();
+          } else if (horizonalRes === -1) {
+            console.log('Move Left');
+            handleLeft();
           } else {
-            console.log('No Move');
+            if (verticalRes === 1) {
+              console.log('Move Up');
+              handleUp();
+            } else if (verticalRes === -1) {
+              console.log('Move Down');
+              handleDown();
+            } else {
+              console.log('No Move');
+            }
+          }
+          prevPose = [...currPose];
+        } else if (mode === -1) {
+          const horizonalRes = checkHorizonal();
+          const position = checkPosition();
+
+          if (horizonalRes === 1) {
+            console.log('Move Right');
+            handleRight();
+          } else if (horizonalRes === -1) {
+            console.log('Move Left');
+            handleLeft();
+          } else {
+            if (position === 1) {
+              console.log('Move Down');
+              handleDown();
+            } else if (position === -1) {
+              console.log('Move Up');
+              handleUp();
+            } else {
+              console.log('No Move');
+            }
           }
         }
-
-        // Update Previous Pose
-        prevPose = [...currPose];
       }
 
       detectingInterval = setInterval(async () => {
@@ -216,6 +250,14 @@ function checkHorizonal() {
     return 1;
   }
   return 0;
+}
+
+function checkPosition() {
+  if (currPose[0].position.y > defaultPose[0].position.y + 20) {
+    return 1;
+  } else if (currPose[0].position.y < defaultPose[0].position.y - 20) {
+    return -1;
+  }
 }
 
 function handleUp() {
