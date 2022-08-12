@@ -2,7 +2,8 @@ import './popup.css';
 
 (function () {
   function setUp() {
-    document.getElementById('setup').addEventListener('click', () => {
+    const setupButton = document.getElementById('setup');
+    setupButton.addEventListener('click', () => {
       chrome.tabs.query(
         {
           active: true,
@@ -19,7 +20,8 @@ import './popup.css';
       );
     });
 
-    document.getElementById('save').addEventListener('click', () => {
+    const saveButton = document.getElementById('save');
+    saveButton.addEventListener('click', () => {
       chrome.tabs.query(
         {
           active: true,
@@ -36,7 +38,8 @@ import './popup.css';
       );
     });
 
-    document.getElementById('start').addEventListener('click', () => {
+    const startButton = document.getElementById('start');
+    startButton.addEventListener('click', () => {
       chrome.tabs.query(
         {
           active: true,
@@ -54,7 +57,8 @@ import './popup.css';
       chrome.storage.local.set({ state: 'START' });
     });
 
-    document.getElementById('stop').addEventListener('click', () => {
+    const stopButton = document.getElementById('stop');
+    stopButton.addEventListener('click', () => {
       chrome.tabs.query(
         {
           active: true,
@@ -70,6 +74,18 @@ import './popup.css';
         }
       );
       chrome.storage.local.set({ state: 'STOP' });
+    });
+
+    const switchButton = document.getElementById('switch');
+    switchButton.addEventListener('click', async () => {
+      let mode = chrome.storage.local.get('mode');
+      if (!mode) {
+        mode = -1;
+      } else {
+        mode = -mode;
+      }
+      chrome.storage.local.set({ mode: mode });
+      switchButton.innerHTML = mode;
     });
   }
 

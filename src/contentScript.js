@@ -23,15 +23,13 @@ video.style.display = 'none';
 
 document.body.appendChild(video);
 
-// 0 for step mode, 1 for consistent mode
-let mode = 0;
-
 // Que value
 const verticalStep = 4;
 const horizonlStep = 15;
 
 // Scroll distance
-const scrollStep = 140;
+const scrollStep = 180;
+const consistentStep = 120;
 
 let net = null;
 
