@@ -26,7 +26,6 @@ document.body.appendChild(video);
 let mode = 1;
 chrome.storage.local.get(['mode'], async (res) => {
   mode = res.mode;
-  console.log('initial mode: ', mode);
 });
 
 // Que value
@@ -35,7 +34,6 @@ const horizonlStep = 15;
 
 // Scroll distance
 const scrollStep = 180;
-const consistentStep = 120;
 
 let net = null;
 
@@ -63,9 +61,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       stop();
       break;
     case 'SWITCH':
-      chrome.storage.local.get(['mode'], async (res) => {
+      chrome.storage.local.get(['mode'], (res) => {
         mode = res.mode;
-        console.log('mode switched to: ', mode);
       });
       break;
     default:
@@ -87,7 +84,7 @@ chrome.storage.local.get(['state'], async (res) => {
 async function init() {
   net = await posenet.load();
   let cachePose = [];
-  chrome.storage.local.get(['default'], async (res) => {
+  chrome.storage.local.get(['default'], (res) => {
     cachePose = res.default;
   });
   if (cachePose) {
@@ -133,10 +130,10 @@ async function setup() {
 // Save default pose
 async function save() {
   if (!defaultPose.length) return;
-  prevPose = defaultPose;
   await chrome.storage.local.set({ default: defaultPose });
   await chrome.storage.local.set({ state: 'STOP' });
 
+  prevPose = defaultPose;
   clearInterval(settingInterval);
   video.style.display = 'none';
   const stream = video.srcObject;
@@ -175,7 +172,7 @@ async function start() {
         // Get Current Head Pose
         const res = await net.estimateSinglePose(video);
         currPose = res.keypoints.slice(0, 5);
-        // Step mode
+
         if (mode === 1) {
           // Check Vertical and Horizonal Moves
           const horizonalRes = checkHorizonal();

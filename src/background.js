@@ -1,10 +1,11 @@
 // Listen for horizonal moves to switch or create tab
 chrome.runtime.onMessage.addListener((request, sender, response) => {
-  console.log('request: ', request.type);
+  console.log('Background received request: ', request.type);
   if (request.type === 'RIGHT') {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       const len = tabs.length;
       const currIndex = tabs.find((tab) => tab.active).index;
+      console.log('Current tab index: ', currIndex);
       if (currIndex === len - 1) {
         chrome.tabs.create();
       } else {
@@ -14,6 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
   } else if (request.type === 'LEFT') {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       const currIndex = tabs.find((tab) => tab.active).index;
+      console.log('Current tab index: ', currIndex);
       if (currIndex === 0) {
         chrome.tabs.create();
       } else {
