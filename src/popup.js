@@ -66,6 +66,13 @@ import './popup.css';
       const modeText = currMode === 1 ? 'Step' : 'Consistent';
       switchButton.innerText = modeText;
     });
+
+    const clearButton = document.getElementById('clear');
+    clearButton.addEventListener('click', async () => {
+      await chrome.storage.local.remove(['default'], (res) => {
+        console.log(res);
+      });
+    });
   }
 
   document.addEventListener('DOMContentLoaded', setUp);
