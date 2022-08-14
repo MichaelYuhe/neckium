@@ -16,7 +16,7 @@ const constraints = {
 const video = document.createElement('video');
 video.width = 320;
 video.height = 240;
-video.style.position = 'absolute';
+video.style.position = 'fixed';
 video.style.top = 0;
 video.style.zIndex = 2000;
 video.style.display = 'none';
@@ -25,7 +25,7 @@ document.body.appendChild(video);
 
 let mode = 1;
 chrome.storage.local.get(['mode'], async (res) => {
-  mode = res.mode;
+  mode = res.mode || 1;
 });
 
 // Que value
@@ -33,7 +33,7 @@ const verticalStep = 4;
 const horizonlStep = 15;
 
 // Scroll distance
-const scrollStep = 180;
+const scrollStep = 240;
 
 let net = null;
 
@@ -74,23 +74,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Start automatically when the state is START
-chrome.storage.local.get(['state'], async (res) => {
+chrome.storage.local.get(['state'], (res) => {
   if (res.state === 'START') {
-    await start();
+    start();
   }
 });
 
 // Init
 async function init() {
   net = await posenet.load();
-  let cachePose = [];
-  chrome.storage.local.get(['default'], (res) => {
-    cachePose = res.default;
-  });
-  if (cachePose) {
-    defaultPose = cachePose;
-    prevPose = defaultPose;
-  }
 }
 
 // Setup default pose
@@ -120,7 +112,7 @@ async function setup() {
 
       settingInterval = setInterval(async () => {
         await capture();
-      }, 500);
+      }, 100);
     })
     .catch((err) => {
       console.log('err: ', err);
@@ -135,25 +127,23 @@ async function save() {
 
   prevPose = defaultPose;
   clearInterval(settingInterval);
-  video.style.display = 'none';
-  const stream = video.srcObject;
-  if (stream) {
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
-    video.srcObject = null;
-  }
+  turnOff();
 }
 
 // Start Neckium
 async function start() {
   if (!net) await init();
 
-  if (!defaultPose.length) {
-    console.log('Set Up Default Pose First.');
-    await setup();
-    return;
-  }
+  await chrome.storage.local.get(['default'], (res) => {
+    console.log('default pose: ', res.default);
+    if (res.default && res.default.length) {
+      defaultPose = res.default;
+      prevPose = defaultPose;
+    } else {
+      console.log('Set Up Default Pose First.');
+      return;
+    }
+  });
 
   await chrome.storage.local.set({ state: 'START' });
 
@@ -233,14 +223,9 @@ async function start() {
 async function stop() {
   await chrome.storage.local.set({ state: 'STOP' });
 
+  clearInterval(settingInterval);
   clearInterval(detectingInterval);
-  const stream = video.srcObject;
-  if (stream) {
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
-    video.srcObject = null;
-  }
+  turnOff();
 }
 
 function checkVertical() {
@@ -248,7 +233,7 @@ function checkVertical() {
   const defaultDiff = defaultPose[0].position.y - currPose[0].position.y;
   if (prevDiff < -verticalStep && defaultDiff < -5) {
     return -1;
-  } else if (prevDiff > verticalStep && defaultDiff > 5) {
+  } else if (prevDiff > verticalStep && defaultDiff > 3) {
     return 1;
   }
   return 0;
@@ -307,4 +292,15 @@ function handleRight() {
       console.log(response);
     }
   );
+}
+
+function turnOff() {
+  video.style.display = 'none';
+  const stream = video.srcObject;
+  if (stream) {
+    stream.getTracks().forEach((track) => {
+      track.stop();
+    });
+    video.srcObject = null;
+  }
 }

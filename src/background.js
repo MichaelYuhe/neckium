@@ -4,10 +4,12 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.type === 'RIGHT') {
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
       const len = tabs.length;
-      const currIndex = tabs.find((tab) => tab.active).index;
-      console.log('Current tab index: ', currIndex);
+      const currTab = tabs.find((tab) => tab.active);
+      console.log(tabs);
+      console.log(currTab);
+      console.log('Current tab index: ', currTab.index);
       if (currIndex === len - 1) {
-        chrome.tabs.create();
+        // chrome.tabs.create();
       } else {
         chrome.tabs.highlight(tabs[index + 1]);
       }
@@ -17,10 +19,11 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       const currIndex = tabs.find((tab) => tab.active).index;
       console.log('Current tab index: ', currIndex);
       if (currIndex === 0) {
-        chrome.tabs.create();
+        // chrome.tabs.create();
       } else {
         chrome.tabs.highlight(tabs[index - 1]);
       }
     });
   }
+  response({});
 });

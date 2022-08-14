@@ -27,13 +27,9 @@ import './popup.css';
     let currMode = 1;
 
     const setupButton = document.getElementById('setup');
-    setupButton.addEventListener('click', () => {
-      chrome.storage.local.get(['state'], async (res) => {
-        if (res.state === 'STOP') {
-          await chrome.storage.local.set({ state: 'SETUP' });
-          sendMessageToContent('SETUP');
-        }
-      });
+    setupButton.addEventListener('click', async () => {
+      await chrome.storage.local.set({ state: 'SETUP' });
+      sendMessageToContent('SETUP');
       if (!isSetting) sendMessageToContent('SETUP');
       isSetting = true;
     });
@@ -45,23 +41,21 @@ import './popup.css';
     });
 
     const startButton = document.getElementById('start');
-    startButton.addEventListener('click', () => {
-      chrome.storage.local.get(['state'], async (res) => {
-        if (res.state === 'STOP') {
-          await chrome.storage.local.set({ state: 'START' });
-          sendMessageToContent('START');
+    startButton.addEventListener('click', async () => {
+      chrome.storage.local.get(['default'], (res) => {
+        if (res.default.length === 0) {
+          console.log('Set up default pose first.');
+          return;
         }
       });
+      await chrome.storage.local.set({ state: 'START' });
+      sendMessageToContent('START');
     });
 
     const stopButton = document.getElementById('stop');
-    stopButton.addEventListener('click', () => {
-      chrome.storage.local.get(['state'], async (res) => {
-        if (res.state === 'START') {
-          await chrome.storage.local.set({ state: 'STOP' });
-          sendMessageToContent('STOP');
-        }
-      });
+    stopButton.addEventListener('click', async () => {
+      await chrome.storage.local.set({ state: 'STOP' });
+      sendMessageToContent('STOP');
     });
 
     const switchButton = document.getElementById('switch');
