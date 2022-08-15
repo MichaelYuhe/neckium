@@ -30,16 +30,17 @@ After you've set up your default pose already, you can start Neckium.
   
 Click 'Start' button, Neckium will start running in the background.  
   
-You can move your head vertically to control the vertical scroll of your browser window. And there are two modes for a better scroll experience for you. 
+You can move your head up or down to control the vertical scroll of your browser window. And there are two modes for a better scroll experience for you. 
   
-Or you can turn your head right or left to switch or create tabs.  
+Or you can move your head right or left to switch tabs.  
   
 There will be more interesting and customizable actions comming...  
 
 ## Todo
 
-- Switch tabs
-- Optimize scroll
+- Customizable actions
+- Optimize the shitty style and shitty user experience
+- Publish to the Chrome Extension Store
 
 ## The End
 
