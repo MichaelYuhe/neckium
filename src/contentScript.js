@@ -18,6 +18,7 @@ video.width = 320;
 video.height = 240;
 video.style.position = 'fixed';
 video.style.top = 0;
+video.style.left = 0;
 video.style.zIndex = 2000;
 video.style.display = 'none';
 
@@ -30,7 +31,7 @@ chrome.storage.local.get(['mode'], async (res) => {
 
 // Que value
 const verticalStep = 4;
-const horizonlStep = 15;
+const horizonlStep = 30;
 
 // Scroll distance
 const scrollStep = 240;
@@ -119,14 +120,13 @@ async function setup() {
     });
 }
 
-// Save default pose
+// Turn off camera and save default pose
 async function save() {
   if (!defaultPose.length) return;
   await chrome.storage.local.set({ default: defaultPose });
   await chrome.storage.local.set({ state: 'STOP' });
 
-  prevPose = defaultPose;
-  clearInterval(settingInterval);
+  settingInterval && clearInterval(settingInterval);
   turnOff();
 }
 
@@ -159,12 +159,10 @@ async function start() {
       video.play();
 
       async function detect() {
-        // Get Current Head Pose
         const res = await net.estimateSinglePose(video);
         currPose = res.keypoints.slice(0, 5);
 
         if (mode === 1) {
-          // Check Vertical and Horizonal Moves
           const horizonalRes = checkHorizonal();
           const verticalRes = checkVertical();
 
@@ -212,7 +210,7 @@ async function start() {
 
       detectingInterval = setInterval(async () => {
         await detect();
-      }, 500);
+      }, 400);
     })
     .catch((err) => {
       console.log('err: ', err);
@@ -223,8 +221,8 @@ async function start() {
 async function stop() {
   await chrome.storage.local.set({ state: 'STOP' });
 
-  clearInterval(settingInterval);
-  clearInterval(detectingInterval);
+  settingInterval && clearInterval(settingInterval);
+  detectingInterval && clearInterval(detectingInterval);
   turnOff();
 }
 
