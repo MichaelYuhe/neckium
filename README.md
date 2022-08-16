@@ -2,7 +2,7 @@
 
 ## Author
 
-MichaelYuhe
+Yuhang Xia
 
 ## How to use
 
