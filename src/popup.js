@@ -1,24 +1,8 @@
 import './popup.css';
+import { sendMessageToContent } from './utils';
 
 (function () {
   let isSetting = false;
-
-  function sendMessageToContent(message) {
-    chrome.tabs.query(
-      {
-        active: true,
-        currentWindow: true,
-      },
-      (tabs) => {
-        const messgae = {
-          type: message,
-        };
-        chrome.tabs.sendMessage(tabs[0].id, messgae, (response) => {
-          console.log(response);
-        });
-      }
-    );
-  }
 
   async function setUp() {
     await chrome.storage.local.set({ mode: 1 });

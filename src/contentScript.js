@@ -24,6 +24,8 @@ video.style.display = 'none';
 
 document.body.appendChild(video);
 
+let isRunning = false;
+
 let mode = 1;
 chrome.storage.local.get(['mode'], async (res) => {
   mode = res.mode || 1;
@@ -66,6 +68,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         mode = res.mode;
       });
       break;
+    case 'ACTIVATE':
+      chrome.storage.local.get(['state'], (res) => {
+        if (res.state === 'START') {
+          if (!isRunning) start();
+        } else if (res.start === 'STOP') {
+          if (isRunning) stop();
+        }
+      });
     default:
       console.log('Invalid Message.');
       break;
@@ -146,6 +156,7 @@ async function start() {
   });
 
   await chrome.storage.local.set({ state: 'START' });
+  isRunning = true;
 
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -220,6 +231,7 @@ async function start() {
 // Turn off camera and stop Neckium
 async function stop() {
   await chrome.storage.local.set({ state: 'STOP' });
+  isRunning = false;
 
   settingInterval && clearInterval(settingInterval);
   detectingInterval && clearInterval(detectingInterval);
