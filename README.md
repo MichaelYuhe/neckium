@@ -39,8 +39,8 @@ There will be more interesting and customizable actions comming...
 ## Todo
 
 - Customizable actions
-- Optimize the shitty style and shitty user experience
-- Publish to the Chrome Extension Store
+- Customizable params such as scroll step distance and safe area size
+- - Publish to the Chrome Extension Store
 
 ## The End
 
