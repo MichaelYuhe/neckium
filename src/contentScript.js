@@ -35,6 +35,9 @@ chrome.storage.local.get(['mode'], async (res) => {
 const verticalStep = 4;
 const horizonlStep = 30;
 
+// Detect interval
+const interval = 200;
+
 // Scroll distance
 const scrollStep = 240;
 
