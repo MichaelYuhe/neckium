@@ -40,7 +40,7 @@ There will be more interesting and customizable actions comming...
 
 - Customizable actions
 - Customizable params such as scroll step distance and safe area size
-- - Publish to the Chrome Extension Store
+- Publish to the Chrome Extension Store
 
 ## The End
 
