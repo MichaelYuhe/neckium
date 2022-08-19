@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Neckium Options</title>
 
-    <script></script>
-
     <style>
       body {
         height: fit-content;
@@ -34,27 +32,88 @@
       h4 {
         font-size: 14px;
       }
+
+      input[type='number'] {
+        width: 60px;
+      }
+
+      button {
+        padding: 0;
+        border: none;
+        background-color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.4s ease;
+      }
+
+      button:hover {
+        transform: scale(1.02);
+      }
+
+      .params-list {
+        font-size: large;
+      }
+
+      .params-list > li {
+        margin: 6px;
+      }
     </style>
+
+    <script>
+      (async function () {
+        chrome.storage.get(['params'], (res) => {
+          console.log(res);
+        });
+      })();
+    </script>
   </head>
   <body>
     <h1>Neckium Options</h1>
-    <div class="configs">
-      <h3>Customize your configs.</h3>
-      <div class="banned-website">
-        <h4>Ban Neckium in these websites</h4>
-      </div>
-      <div class="scroll-experience">
-        <h4>Change scroll step and default scroll mode</h4>
-      </div>
+
+    <div class="params">
+      <h3>Customize params</h3>
+      <ul class="params-list">
+        <li>
+          Scoroll Step:
+          <input id="scroll-step" type="number" value="120" />
+        </li>
+        <li>
+          Vertical Safe Area Size:
+          <input id="vertial-area" type="number" value="120" />
+        </li>
+        <li>
+          Horizontal Safe Area Size:
+          <input id="horizontal-area" type="number" value="120" />
+        </li>
+        <li>
+          Default Scroll Mode:
+          <input
+            type="radio"
+            value="exercise"
+            id="exercise"
+            name="exercise"
+            checked
+          />
+          <label for="exercise">Exercise</label>
+          <input type="radio" value="lazy" id="lazy" name="lazy" />
+          <label for="lazy">Lazy</label>
+        </li>
+        <li>
+          Automatically Start:
+          <input type="checkbox" />
+        </li>
+      </ul>
+      <button id="save">Save Changes</button>
+    </div>
+
+    <div class="banned-website">
+      <h3>Ban Neckium in these websites</h3>
     </div>
 
     <div class="actions">
       <h3>Define your own actions</h3>
     </div>
 
-    <div class="data">
-      <h3>Manage your data</h3>
-      <div class="show-data"></div>
-    </div>
+    <script src="options.js"></script>
   </body>
 </html>

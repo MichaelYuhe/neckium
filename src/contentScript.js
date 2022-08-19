@@ -24,6 +24,7 @@ video.style.display = 'none';
 
 document.body.appendChild(video);
 
+let canSave = false;
 let isRunning = false;
 
 let mode = 1;
@@ -75,7 +76,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.storage.local.get(['state'], (res) => {
         if (res.state === 'START') {
           if (!isRunning) start();
-        } else if (res.start === 'STOP') {
+        } else if (res.state === 'STOP') {
           if (isRunning) stop();
         }
       });
@@ -122,6 +123,7 @@ async function setup() {
         const res = await net.estimateSinglePose(video);
         const pose = res.keypoints.slice(0, 5);
         defaultPose = pose;
+        canSave = true;
       }
 
       settingInterval = setInterval(async () => {
@@ -135,11 +137,11 @@ async function setup() {
 
 // Turn off camera and save default pose
 async function save() {
-  if (!defaultPose.length) return;
+  if (!canSave) return;
   await chrome.storage.local.set({ default: defaultPose });
   await chrome.storage.local.set({ state: 'STOP' });
 
-  settingInterval && clearInterval(settingInterval);
+  clearInterval(settingInterval);
   turnOff();
 }
 
@@ -236,8 +238,8 @@ async function stop() {
   await chrome.storage.local.set({ state: 'STOP' });
   isRunning = false;
 
-  settingInterval && clearInterval(settingInterval);
-  detectingInterval && clearInterval(detectingInterval);
+  clearInterval(settingInterval);
+  clearInterval(detectingInterval);
   turnOff();
 }
 
