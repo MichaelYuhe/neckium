@@ -58,52 +58,38 @@
         margin: 6px;
       }
     </style>
-
-    <script>
-      (async function () {
-        chrome.storage.get(['params'], (res) => {
-          console.log(res);
-        });
-      })();
-    </script>
   </head>
   <body>
     <h1>Neckium Options</h1>
 
     <div class="params">
       <h3>Customize params</h3>
-      <ul class="params-list">
-        <li>
-          Scoroll Step:
-          <input id="scroll-step" type="number" value="120" />
-        </li>
-        <li>
-          Vertical Safe Area Size:
-          <input id="vertial-area" type="number" value="120" />
-        </li>
-        <li>
-          Horizontal Safe Area Size:
-          <input id="horizontal-area" type="number" value="120" />
-        </li>
-        <li>
-          Default Scroll Mode:
-          <input
-            type="radio"
-            value="exercise"
-            id="exercise"
-            name="exercise"
-            checked
-          />
-          <label for="exercise">Exercise</label>
-          <input type="radio" value="lazy" id="lazy" name="lazy" />
-          <label for="lazy">Lazy</label>
-        </li>
-        <li>
-          Automatically Start:
-          <input type="checkbox" />
-        </li>
-      </ul>
-      <button id="save">Save Changes</button>
+      <form action="#">
+        <ul class="params-list">
+          <li>
+            Scoroll Step:
+            <input id="scroll-step" type="number" />
+          </li>
+          <li>
+            Vertical Que:
+            <input id="vertical-que" type="number" />
+          </li>
+          <li>
+            Horizontal Que:
+            <input id="horizontal-que" type="number" />
+          </li>
+          <li>
+            Vertical Safe Area Size:
+            <input id="vertical-area" type="number" />
+          </li>
+          <li>
+            Horizontal Safe Area Size:
+            <input id="horizontal-area" type="number" />
+          </li>
+        </ul>
+      </form>
+
+      <button id="save" type="submit">Save Changes</button>
     </div>
 
     <div class="banned-website">
