@@ -32,15 +32,11 @@ chrome.storage.local.get(['mode'], async (res) => {
   mode = res.mode || 1;
 });
 
-// Que value
-const verticalStep = 4;
-const horizonlStep = 30;
-
-// Detect interval
-const interval = 200;
-
-// Scroll distance
-const scrollStep = 240;
+let scrollStep = 240;
+let verticalQue = 4;
+let horizontalQue = 30;
+let verticalArea = 5;
+let horizontalArea = 5;
 
 let net = null;
 
@@ -105,6 +101,14 @@ async function setup() {
   if (!net) await init();
 
   await chrome.storage.local.set({ state: 'SETUP' });
+
+  const params = (await chrome.storage.local.get('params')).params;
+
+  scrollStep = params.scrollStep || 120;
+  verticalQue = params.verticalQue || 5;
+  horizontalQue = params.horizontalQue || 30;
+  verticalArea = params.verticalArea || 5;
+  horizontalArea = params.horizontalArea || 5;
 
   video.style.display = 'block';
 
@@ -246,9 +250,9 @@ async function stop() {
 function checkVertical() {
   const prevDiff = prevPose[0].position.y - currPose[0].position.y;
   const defaultDiff = defaultPose[0].position.y - currPose[0].position.y;
-  if (prevDiff < -verticalStep && defaultDiff < -5) {
+  if (prevDiff < -verticalQue && defaultDiff < -verticalArea) {
     return -1;
-  } else if (prevDiff > verticalStep && defaultDiff > 3) {
+  } else if (prevDiff > verticalQue && defaultDiff > verticalArea) {
     return 1;
   }
   return 0;
@@ -257,9 +261,9 @@ function checkVertical() {
 function checkHorizonal() {
   const prevDiff = prevPose[0].position.x - currPose[0].position.x;
   const defaultDiff = defaultPose[0].position.x - currPose[0].position.x;
-  if (prevDiff < -horizonlStep && defaultDiff < -5) {
+  if (prevDiff < -horizontalQue && defaultDiff < -horizontalArea) {
     return -1;
-  } else if (prevDiff > horizonlStep && defaultDiff > 5) {
+  } else if (prevDiff > horizontalQue && defaultDiff > horizontalArea) {
     return 1;
   }
   return 0;

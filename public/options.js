@@ -35,7 +35,6 @@
   });
 
   saveButton.addEventListener('click', () => {
-    console.log(params);
     chrome.storage.local.set({ params: params });
   });
 })();
