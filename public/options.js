@@ -6,13 +6,13 @@
   const horizontalArea = document.getElementById('horizontal-area');
   const saveButton = document.getElementById('save');
 
-  const params = (await chrome.storage.local.get('params')).params;
+  const params = (await chrome.storage.local.get('params')).params || {};
 
-  scrollStepInput.value = params.scrollStep || 120;
-  verticalQue.value = params.verticalQue || 5;
-  horizontalQue.value = params.horizontalQue || 30;
-  verticalArea.value = params.verticalArea || 5;
-  horizontalArea.value = params.horizontalArea || 5;
+  scrollStepInput.value = params?.scrollStep || 120;
+  verticalQue.value = params?.verticalQue || 5;
+  horizontalQue.value = params?.horizontalQue || 30;
+  verticalArea.value = params?.verticalArea || 5;
+  horizontalArea.value = params?.horizontalArea || 5;
 
   scrollStepInput.addEventListener('input', (e) => {
     params.scrollStep = e.target.value;
@@ -34,7 +34,7 @@
     params.horizontalArea = e.target.value;
   });
 
-  saveButton.addEventListener('click', () => {
-    chrome.storage.local.set({ params: params });
+  saveButton.addEventListener('click', async () => {
+    await chrome.storage.local.set({ params: params });
   });
 })();

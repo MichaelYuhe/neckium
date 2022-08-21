@@ -102,14 +102,6 @@ async function setup() {
 
   await chrome.storage.local.set({ state: 'SETUP' });
 
-  const params = (await chrome.storage.local.get('params')).params;
-
-  scrollStep = params.scrollStep || 120;
-  verticalQue = params.verticalQue || 5;
-  horizontalQue = params.horizontalQue || 30;
-  verticalArea = params.verticalArea || 5;
-  horizontalArea = params.horizontalArea || 5;
-
   video.style.display = 'block';
 
   navigator.mediaDevices
@@ -163,6 +155,16 @@ async function start() {
       return;
     }
   });
+
+  const params = (await chrome.storage.local.get('params')).params;
+
+  console.log(params);
+
+  scrollStep = params?.scrollStep || 120;
+  verticalQue = params?.verticalQue || 5;
+  horizontalQue = params?.horizontalQue || 30;
+  verticalArea = params?.verticalArea || 5;
+  horizontalArea = params?.horizontalArea || 5;
 
   await chrome.storage.local.set({ state: 'START' });
   isRunning = true;
