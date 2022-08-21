@@ -77,7 +77,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
       });
     default:
-      console.log('Invalid Message.');
       break;
   }
   sendResponse({});
@@ -146,7 +145,6 @@ async function start() {
   if (!net) await init();
 
   await chrome.storage.local.get(['default'], (res) => {
-    console.log('default pose: ', res.default);
     if (res.default && res.default.length) {
       defaultPose = res.default;
       prevPose = defaultPose;
@@ -158,9 +156,7 @@ async function start() {
 
   const params = (await chrome.storage.local.get('params')).params;
 
-  console.log(params);
-
-  scrollStep = params?.scrollStep || 120;
+  scrollStep = params?.scrollStep || 240;
   verticalQue = params?.verticalQue || 5;
   horizontalQue = params?.horizontalQue || 30;
   verticalArea = params?.verticalArea || 5;
@@ -261,6 +257,16 @@ function checkVertical() {
 }
 
 function checkHorizonal() {
+  const prevNose = prevPose[0],
+    currNose = currPose[0],
+    defaultNose = defaultPose[0];
+  const prevLEar = prevPose[3],
+    prevREar = prevPose[4],
+    currLEar = currPose[3],
+    currREar = currPose[4],
+    defaultLEar = defaultPose[3],
+    defaultREar = defaultPose[4];
+
   const prevDiff = prevPose[0].position.x - currPose[0].position.x;
   const defaultDiff = defaultPose[0].position.x - currPose[0].position.x;
   if (prevDiff < -horizontalQue && defaultDiff < -horizontalArea) {

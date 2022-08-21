@@ -1,6 +1,6 @@
 import { sendMessageToContent } from './utils';
 
-chrome.storage.local.get(['params'], (res) => {
+chrome.storage.local.get('params', (res) => {
   if (!res) {
     chrome.storage.local.set({
       params: {
