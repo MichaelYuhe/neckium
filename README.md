@@ -4,6 +4,12 @@
 
 Yuhang Xia
 
+## Intro
+
+Developed to help programmers and other people who work with computers for long periods of time to move their cervical spine.  
+
+
+
 ## How to use
 
 ### Install
