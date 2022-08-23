@@ -1,8 +1,5 @@
 # Neckium
 
-## Author
-
-Yuhang Xia
 
 ## Intro
 
