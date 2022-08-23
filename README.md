@@ -39,11 +39,16 @@ Or you can move your head right or left to switch tabs.
   
 There will be more interesting and customizable actions comming...  
 
+### Config
+
+You can customize params such as scroll step distance, safe area size and so on.  
+
+Right click on and choose options, you will be redirect to the options page where you can change the params. Just input and click save, and go back to restart Neckium to check the effect.  
+
 ## Todo
 
-- Customizable actions
-- Customizable params such as scroll step distance and safe area size
-- Publish to the Chrome Extension Store
+- Customizable actions.  
+- Publish to the Chrome Extension Store.(Too expensive to create a developer accout...)  
 
 ## The End
 
