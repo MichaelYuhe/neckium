@@ -11,7 +11,7 @@ Developed to help programmers and other people who work with computers for long 
 
 ### Install
 
-1. Mannual Install:
+1. Mannual Install:  
    Go to release page, download the file and unzip it to get a build folder.  
    Open your chrome, click extensions - manage extensions - load unzipped extension, and choose that 'build' folder.
 2. Install from the Chrome Web Store:
