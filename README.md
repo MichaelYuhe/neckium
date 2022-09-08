@@ -43,7 +43,7 @@ There will be more interesting and customizable actions comming...
 
 You can customize params such as scroll step distance, safe area size and so on.  
 
-Right click on and choose options, you will be redirect to the options page where you can change the params. Just input and click save, and go back to restart Neckium to check the effect.  
+Right click and choose options, you will be redirect to the options page where you can change the params. Just input and click save, and go back to restart Neckium to check the effect.  
 
 ## Todo
 
@@ -52,6 +52,6 @@ Right click on and choose options, you will be redirect to the options page wher
 
 ## The End
 
-Powered by Posenet & Tensorflow.js & chrome-extension-cli  
+Powered by Tensorflow.js & chrome-extension-cli  
   
 Inspired by Vimium
