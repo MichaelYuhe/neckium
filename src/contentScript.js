@@ -49,7 +49,6 @@ let settingInterval = null,
 
 // Listen for control messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('request: ', request.type);
   switch (request.type) {
     case 'SETUP':
       setup();
@@ -181,13 +180,13 @@ async function start() {
         currPose = res.keypoints.slice(0, 5);
 
         if (mode === 1) {
-          const horizonalRes = checkHorizonal();
+          const horizontalRes = checkHorizontal();
           const verticalRes = checkVertical();
 
-          if (horizonalRes === 1) {
+          if (horizontalRes === 1) {
             console.log('Move Right');
             handleRight();
-          } else if (horizonalRes === -1) {
+          } else if (horizontalRes === -1) {
             console.log('Move Left');
             handleLeft();
           } else {
@@ -203,13 +202,13 @@ async function start() {
           }
           prevPose = [...currPose];
         } else if (mode === -1) {
-          const horizonalRes = checkHorizonal();
+          const horizontalRes = checkHorizontal();
           const position = checkPosition();
 
-          if (horizonalRes === 1) {
+          if (horizontalRes === 1) {
             console.log('Move Right');
             handleRight();
-          } else if (horizonalRes === -1) {
+          } else if (horizontalRes === -1) {
             console.log('Move Left');
             handleLeft();
           } else {
@@ -256,7 +255,7 @@ function checkVertical() {
   return 0;
 }
 
-function checkHorizonal() {
+function checkHorizontal() {
   const prevNose = prevPose[0],
     currNose = currPose[0],
     defaultNose = defaultPose[0];
@@ -282,6 +281,23 @@ function checkPosition() {
     return 1;
   } else if (currPose[0].position.y < defaultPose[0].position.y - 20) {
     return -1;
+  }
+}
+
+function handleAction(actionType) {
+  switch (actionType) {
+    case 'up':
+      handleUp();
+      break;
+    case 'down':
+      handleDown();
+      break;
+    case 'left':
+      handleLeft();
+      break;
+    case 'right':
+      handleRight();
+      break;
   }
 }
 
